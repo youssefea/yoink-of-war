@@ -3,17 +3,18 @@ import { NextRequest } from "next/server";
 import { ImageResponse } from "next/og";
 import { unstable_noStore as noStore } from "next/cache";
 
-export async function GET(req: NextRequest) {
+const img="https://i.imgur.com/1JEu5vu.png"
+
+export async function GET(req: NextRequest) { // Background image URL
   const urlObject = new URL(req.url);
-  const user = urlObject.searchParams.get("user") || "DefaultStream";
-  const url = "https://i.imgur.com/tWXF6qY.png";
+  const user = urlObject.searchParams.get("user") || "Mikk";
 
   const element = (
     <div
       style={{
         width: "100%",
         height: "100%",
-        backgroundImage: `url(${url})`,
+        backgroundImage: `url(${img})`,
         backgroundSize: "cover",
         display: "flex",
         flexDirection: "column",
@@ -26,16 +27,15 @@ export async function GET(req: NextRequest) {
       <p
         style={{
           position: "absolute",
-          top: "760",
+          top: "30%",
           left: "50%",
           fontSize: "60px",
-          fontFamily: "Geist",
+          fontFamily: "Caveat",
           fontWeight: "bold",
-          margin: "0 0 20px 0",
-          textAlign: "center",
-          color: "white",
-          transform: "translate(-50%, -50%)",
           fontStyle: "italic",
+          textAlign: "center",
+          color: "red",
+          transform: "translate(-50%, -50%)",
         }}
       >{`@${user}`}</p>
     </div>

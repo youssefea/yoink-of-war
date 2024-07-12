@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { URL, DEBUGGER_HUB_URL } from "../../constants";
+import {account} from "./../config";
 import { getFrameMessage } from "frames.js";
+import { init, fetchQuery } from "@airstack/node";
+import {getFidFromHandleQuery} from "./../api";
+import {kv} from "@vercel/kv"
+
+init(process.env.AIRSTACK_KEY || "");
 
 
 const messageInvalid = "https://i.imgur.com/cmuCZV3.png";
-const gameRules="https://i.imgur.com/S8TyY3m.png";
+const userNameDoesNotExist = "https://i.imgur.com/bE8q47h.png";
 
 
 const _html = (img, msg1, action1, url1) => `
@@ -24,6 +30,25 @@ const _html = (img, msg1, action1, url1) => `
 </html>
 `;
 
+const _html1 = (img, msg1, action1, url1,msg2, action2,url2,post_url2) => `
+<!DOCTYPE html>
+<head>
+    <title>Frame</title>
+    <meta property="og:image" content="${img}" />
+    <meta property="fc:frame" content="vNext" />
+    <meta property="fc:frame:image" content="${img}" />
+    <meta property="fc:frame:image:aspect_ratio" content="1:1" />
+    <meta property="fc:frame:button:1" content="${msg1}" />
+    <meta property="fc:frame:button:1:action" content="${action1}" />
+    <meta property="fc:frame:button:1:target" content="${url1}" />
+    <meta property="fc:frame:button:1:post_url" content="${url2}" />
+    <meta property="fc:frame:button:2" content="${msg2}" />
+    <meta property="fc:frame:button:2:action" content="${action2}" />
+    <meta property="fc:frame:button:2:target" content="${url2}" />
+    <meta property="fc:frame:button:2:post_url" content="${post_url2}" />
+  </head>
+`;
+
 export async function POST(req: Request) {
   const data = await req.json();
 
@@ -41,14 +66,47 @@ export async function POST(req: Request) {
       )
     );
   }
-  
+
+  const challengedUsername = frameMessage.inputText;
+  const getFidFromHandle = fetchQuery(getFidFromHandleQuery(challengedUsername));
+  const social = getFidFromHandle.data.Socials.Social;
+  if (social.length === 0) {
+    return new NextResponse(
+      _html(
+        userNameDoesNotExist,
+        "Retry",
+        "post",
+        `${URL}`,
+      )
+    );
+  }
+
+  const challengedFid = social[0].userId;
+  const challengerFid = frameMessage.requesterFid;
+  const challengerUsername = frameMessage.requesterUserData?.username;
+
+  const gameIndex:any=kv.get("gameIndex");
+  if (!gameIndex) {
+    kv.set("gameIndex", 0);
+  }
+  else{
+    kv.set("gameIndex", parseInt(gameIndex)+1);
+  }
+  const newAccount = account(gameIndex);
+  await kv.hset("gamesAddresses", {
+    [`${challengerUsername}vs${challengedUsername}`]: [gameIndex,newAccount],
+  });
 
   return new NextResponse(
-    _html(
-      gameRules,
+    _html1(
+      `${URL}/images/tryingChallenge?user=${challengedUsername}`,
       "Back",
       "post",
-      `${URL}`
+      `${URL}`,
+      "Start Challenge",
+      "tx",
+      `${URL}/challnge/create/${newAccount.address}`,
+      `${URL}/challenge/created/${challengedUsername}`,
     )
   );
 }

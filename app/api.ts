@@ -120,6 +120,15 @@ query getUserHandle {
 }
 `;
 
+export const getFidFromHandleQuery = (handle) => `
+query FidFromUsername {
+  Socials(
+    input: {filter: {dappName: {_eq: farcaster}, profileName: {_eq: "${handle}"}}, blockchain: ethereum}
+  ) {
+    Social {
+      userId
+    }
+  }`;
 
 // Function to perform the POST request and handle the response
 export async function fetchSubgraphData(myQuery) {

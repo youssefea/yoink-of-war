@@ -3,12 +3,16 @@ import { NextRequest } from "next/server";
 import { ImageResponse } from "next/og";
 import { unstable_noStore as noStore } from "next/cache";
 
-const img="https://i.imgur.com/67hTurB.png"
+const imgStart="https://i.imgur.com/ORto5EZ.png"
+const imgEnd="https://i.imgur.com/sLedoyV.png"
 
 export async function GET(req: NextRequest) { // Background image URL
   const urlObject = new URL(req.url);
   const user1 = urlObject.searchParams.get("user1") || "Mikk";
   const user2 = urlObject.searchParams.get("user2") || "Vijay";
+  const startOrEnd = urlObject.searchParams.get("startOrEnd") || "start";
+
+  const img = startOrEnd === "start" ? imgStart : imgEnd;
 
   const element = (
     <div
@@ -38,7 +42,22 @@ export async function GET(req: NextRequest) { // Background image URL
           color: "red",
           transform: "translate(-50%, -50%)",
         }}
-      >{`@${user1} challenged @${user2}`}</p>
+      >{`@${user1}`}</p>
+      <p
+        style={{
+          position: "absolute",
+          top: "30 %",
+          left: "50%",
+          fontSize: "60px",
+          fontFamily: "Caveat",
+          fontWeight: "bold",
+          fontStyle: "italic",
+          textAlign: "center",
+          color: "red",
+          transform: "translate(-50%, -50%)",
+        }}
+      >{`@${user2}`}</p>
+
     </div>
   );
 
