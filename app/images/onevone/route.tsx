@@ -7,10 +7,13 @@ import { url } from "inspector";
 const img="https://i.imgur.com/cIFvtfH.png"
 
 export async function GET(req: NextRequest) { // Background image URL
+  noStore();
   const urlObject = new URL(req.url);
-  const user = urlObject.searchParams.get("user") || "Mikk";
-  const challengerBalance=urlObject.searchParams.get("challenger") || "0";
-  const challengedBalance=urlObject.searchParams.get("challenged") || "0";
+  const currentWinner = urlObject.searchParams.get("currentWinner") || "Mikk";
+  const challenger = urlObject.searchParams.get("challenger") || "Mikk";
+  const challenged = urlObject.searchParams.get("challenged") || "Mikk";
+  const challengerScore=urlObject.searchParams.get("challengerScore") || "0";
+  const challengedScore=urlObject.searchParams.get("challengedScore") || "0";
 
   const element = (
     <div
@@ -40,7 +43,21 @@ export async function GET(req: NextRequest) { // Background image URL
           color: "red",
           transform: "translate(-50%, -50%)",
         }}
-      >{`@${user}`}</p>
+      >{`@${currentWinner}`}</p>
+      <p
+        style={{
+          position: "absolute",
+          top: "90%",
+          left: "25%",
+          fontSize: "60px",
+          fontFamily: "Caveat",
+          fontWeight: "bold",
+          fontStyle: "italic",
+          textAlign: "center",
+          color: "red",
+          transform: "translate(-50%, -50%)",
+        }}
+      >{`@${challenger}`}</p>
       <p
         style={{
           position: "absolute",
@@ -54,7 +71,21 @@ export async function GET(req: NextRequest) { // Background image URL
           color: "red",
           transform: "translate(-50%, -50%)",
         }}
-      >{`${challengerBalance}`}</p>
+      >{`${challengerScore}`}</p>
+      <p
+        style={{
+          position: "absolute",
+          top: "90%",
+          left: "75%",
+          fontSize: "60px",
+          fontFamily: "Caveat",
+          fontWeight: "bold",
+          fontStyle: "italic",
+          textAlign: "center",
+          color: "red",
+          transform: "translate(-50%, -50%)",
+        }}
+      >{`@${challenged}`}</p>
       <p
         style={{
           position: "absolute",
@@ -68,7 +99,7 @@ export async function GET(req: NextRequest) { // Background image URL
           color: "red",
           transform: "translate(-50%, -50%)",
         }}
-      >{`${challengedBalance}`}</p>
+      >{`${challengedScore}`}</p>
     </div>
   );
 

@@ -3,7 +3,7 @@ import { URL } from '../../../../constants'
 import {kv} from '@vercel/kv'
 
 const image = "https://i.imgur.com/M6b5MFy.png";
-const buttonText1 = 'Play'
+const buttonText1 = 'Check Scores'
 const buttonText2 = 'Game Rules'
 
 export default function Home() {

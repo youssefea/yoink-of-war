@@ -3,10 +3,11 @@ import { NextRequest } from "next/server";
 import { ImageResponse } from "next/og";
 import { unstable_noStore as noStore } from "next/cache";
 
-const imgStart="https://i.imgur.com/ORto5EZ.png"
-const imgEnd="https://i.imgur.com/sLedoyV.png"
+const imgStart="https://i.imgur.com/F1ZtM91.png"
+const imgEnd="https://i.imgur.com/5lCt72O.png"
 
-export async function GET(req: NextRequest) { // Background image URL
+export async function GET(req: NextRequest) {
+  noStore();
   const urlObject = new URL(req.url);
   const user1 = urlObject.searchParams.get("user1") || "Mikk";
   const user2 = urlObject.searchParams.get("user2") || "Vijay";

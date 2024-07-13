@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 import { unstable_noStore as noStore } from "next/cache";
 
 const startImg="https://i.imgur.com/9oKqHB8.png"
-const endImg="https://i.imgur.com/rsaVHeS.png"
+const endImg="https://i.imgur.com/lsLuKDK.png"
 
 export async function GET(req: NextRequest) { // Background image URL
   const urlObject = new URL(req.url);

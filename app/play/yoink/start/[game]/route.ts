@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { URL, DEBUGGER_HUB_URL, gameStep, cfaForwarderAddress, tokenAddress } from "../../../../../constants";
 import { cfaForwarderABI } from "../../../../abi";
-import {account, publicClient, walletClient} from "../../../../config";
+import {account, publicClient, walletClient, accountFromPrivateKey} from "../../../../config";
 import { getFrameMessage } from "frames.js";
 import { init, fetchQuery } from "@airstack/node";
 import {getFidFromHandleQuery} from "../../../../api";
@@ -11,7 +11,7 @@ init(process.env.AIRSTACK_KEY || "");
 
 
 const messageInvalid = "https://i.imgur.com/GOk5MhJ.png";
-const confirmYoink="https://i.imgur.com/SUQIiMf.png"
+const confirmDone="https://i.imgur.com/IV4Sb3X.png"
 
 const _html = (img, msg1, action1, url1) => `
 <!DOCTYPE html>
@@ -30,12 +30,37 @@ const _html = (img, msg1, action1, url1) => `
 </html>
 `;
 
+const _html1 = (img, msg1, action1, url1, msg2, action2, url2, msg3, action3, url3 ) => `
+<!DOCTYPE html>
+<head>
+    <title>Frame</title>
+    <meta property="og:image" content="${img}" />
+    <meta property="fc:frame" content="vNext" />
+    <meta property="fc:frame:image" content="${img}" />
+    <meta property="fc:frame:image:aspect_ratio" content="1:1" />
+    <meta property="fc:frame:button:1" content="${msg1}" />
+    <meta property="fc:frame:button:1:action" content="${action1}" />
+    <meta property="fc:frame:button:1:target" content="${url1}" />
+    <meta property="fc:frame:button:1:post_url" content="${url2}" />
+    <meta property="fc:frame:button:2" content="${msg2}" />
+    <meta property="fc:frame:button:2:action" content="${action2}" />
+    <meta property="fc:frame:button:2:target" content="${url2}" />
+    <meta property="fc:frame:button:2:post_url" content="${url2}" />
+    <meta property="fc:frame:button:3" content="${msg3}" />
+    <meta property="fc:frame:button:3:action" content="${action3}" />
+    <meta property="fc:frame:button:3:target" content="${url3}" />
+    <meta property="fc:frame:button:3:post_url" content="${url3}" />
+  </head>
+`;
+
 export async function POST(req: Request, { params }: { params: { game: string } }) {
   const data = await req.json();
   const game=params.game
   const gameArray=game.split("-");
   const gameIndex=gameArray[0];
   const gameAddress=gameArray[1];
+  const challengerUsername=gameArray[2];
+  const challengedUsername=gameArray[3];
 
   const frameMessage = await getFrameMessage(data, {
     hubHttpUrl: DEBUGGER_HUB_URL,
@@ -57,24 +82,30 @@ export async function POST(req: Request, { params }: { params: { game: string } 
   let yoinkerFlowRate: any = await publicClient.readContract({
     address: cfaForwarderAddress,
     abi: cfaForwarderABI,
-    functionName: "getFlowRate",
+    functionName: "getFlowrate",
     args: [tokenAddress, yoinkerAddress, gameAddress ],
   });
 
   let startFlowRate: any = await walletClient.writeContract({
     address: cfaForwarderAddress,
     abi: cfaForwarderABI,
-    functionName: "setFlowrate",
-    account: account(parseInt(gameIndex)),
-    args: [tokenAddress, yoinkerAddress, gameAddress, yoinkerFlowRate, gameStep ],
+    functionName: "setFlowrateFrom",
+    account: accountFromPrivateKey,
+    args: [tokenAddress, yoinkerAddress, gameAddress, Number(yoinkerFlowRate)+gameStep ],
   });
 
   return new NextResponse(
-    _html(
-      confirmYoink,
-      "Check status",
+    _html1(
+      confirmDone,
+      "Re-Yoink",
       "post",
-      `${URL}/play/yoink/start`,
+      `${URL}/play/yoink/prestart/${game}`,
+      "Check Scores",
+      "post",
+      `${URL}/play/check/${challengerUsername}-${challengedUsername}`,
+      "End game?",
+      "post",
+      `${URL}/play/yoink/end/${game}`,
     )
   );
 }

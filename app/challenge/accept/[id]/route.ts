@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { URL, DEBUGGER_HUB_URL, tokenAddress,cfaForwarderAddress } from "../../../../constants";
+import {accountFromPrivateKey, publicClient, walletClient} from "../../../config";
 import { getFrameMessage } from "frames.js";
 import { encodeFunctionData } from "viem";
 import { cfaForwarderABI } from "../abi";
@@ -45,7 +46,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const encodedData = encodeFunctionData({
     abi: cfaForwarderABI,
     functionName: "grantPermissions",
-    args:[tokenAddress, receiverAddress]
+    args:[tokenAddress, accountFromPrivateKey.address]
   });
 
   return NextResponse.json({

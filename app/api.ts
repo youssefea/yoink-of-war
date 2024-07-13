@@ -130,8 +130,8 @@ query FidFromUsername {
 
 export const getTotalStreamedUntilUpdatedQuery=(sender, receiver, timestamp) => `
 query getTotalStreamedUntilUpdated {
-  accounts(where: {id: "${sender}"}) {
-    outflows(where: {updatedAtTimestamp_gt: "${timestamp}", token: "${tokenAddress}", receiver: "${receiver}"}) {
+  accounts(where: {id: "${sender.toLowerCase()}"}) {
+    outflows(where: {updatedAtTimestamp_gt: "${timestamp}", token: "${tokenAddress.toLocaleLowerCase()}", receiver: "${receiver.toLowerCase()}"}) {
       streamedUntilUpdatedAt
       currentFlowRate
       updatedAtTimestamp
@@ -148,7 +148,7 @@ export async function fetchSubgraphData(myQuery) {
 
   try {
     const response = await fetch(
-      "https://base-mainnet.subgraph.x.superfluid.dev/",
+      "https://optimism-sepolia.subgraph.x.superfluid.dev/",
       {
         method: "POST",
         headers: {

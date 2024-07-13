@@ -18,3 +18,5 @@ export const account = (index)=> mnemonicToAccount(
       accountIndex: index
     }
   )
+
+export const accountFromPrivateKey = privateKeyToAccount(`0x${process.env.PVT_KEY}`)

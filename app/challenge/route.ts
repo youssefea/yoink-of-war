@@ -76,10 +76,14 @@ export async function POST(req: Request) {
   const challengerUsername = frameMessage.requesterUserData?.username;
   console.log(challengerUsername);
 
-  const gameIndex: any = await kv.get("gameIndex");
-  console.log("gameindex", gameIndex);
-  if (!gameIndex) {
+  let gameIndex:any;
+
+  try{
+    gameIndex = await kv.get("gameIndex");
+  }
+  catch(error) {
     await kv.set("gameIndex", 0);
+    gameIndex=0;
   }
 
   const now=Date.now()/1000;

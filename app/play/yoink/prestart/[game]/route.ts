@@ -53,7 +53,7 @@ export async function POST(req: Request, { params }: { params: { game: string } 
   return new NextResponse(
     _html(
       confirmYoink,
-      "Check status",
+      "Yoink",
       "post",
       `${URL}/play/yoink/start/${game}`,
     )

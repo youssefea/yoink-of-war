@@ -4,7 +4,7 @@ import {kv} from '@vercel/kv'
 
 const image = "https://i.imgur.com/M6b5MFy.png";
 const buttonText1 = 'Accept'
-const buttonText2 = 'Join'
+const buttonText2 = 'Start Yoinking'
 
 export default function Home() {
   return (
@@ -46,8 +46,8 @@ export async function generateMetadata({
     'fc:frame:button:1:post_url': `${URL}/challenge/accepted/${user1}`,
     'fc:frame:button:2': buttonText2,
     'fc:frame:button:2:action': 'post',
-    'fc:frame:button:2:post_url': `${URL}/airdrop1`,
-    'fc:frame:button:2:target': `${URL}/airdrop1`,
+    'fc:frame:button:2:post_url': `${URL}/play/new/${id}`,
+    'fc:frame:button:2:target': `${URL}/play/new/${id}`,
 
   }
 
