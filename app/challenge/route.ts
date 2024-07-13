@@ -8,7 +8,7 @@ import { kv } from "@vercel/kv";
 
 init(process.env.AIRSTACK_KEY || "");
 
-const messageInvalid = "https://i.imgur.com/cmuCZV3.png";
+const messageInvalid = "https://i.imgur.com/GOk5MhJ.png";
 const userNameDoesNotExist = "https://i.imgur.com/bE8q47h.png";
 
 const _html = (img, msg1, action1, url1) => `
@@ -82,17 +82,23 @@ export async function POST(req: Request) {
     await kv.set("gameIndex", 0);
   }
 
-  const gameAddress = await kv.hget(
+  const now=Date.now()/1000;
+
+  let gameAddress = await kv.hget(
     "gameAddresses",
     `${challengerUsername}vs${challengedUsername}`
   );
   if (!gameAddress) {
     const newAccount = account(gameIndex);
+    gameAddress = newAccount.address;
     await kv.hset("gamesAddresses", {
-      [`${challengerUsername}vs${challengedUsername}`]: newAccount.address,
+      [`${challengerUsername}vs${challengedUsername}`]: gameAddress
     });
     await kv.hset("gamesIndexes", {
-      [`${challengerUsername}vs${challengedUsername}`]: gameIndex + 1,
+      [`${challengerUsername}vs${challengedUsername}`]: gameIndex + 1
+    });
+    await kv.hset("gamesTimestamps", {
+      [`${challengerUsername}vs${challengedUsername}`]: now
     });
     await kv.set("gameIndex", gameIndex+1);
   }
@@ -105,7 +111,7 @@ export async function POST(req: Request) {
       `${URL}`,
       "Start Challenge",
       "tx",
-      `${URL}/challenge/create/${newAccount.address}`,
+      `${URL}/challenge/create/${gameAddress}`,
       `${URL}/challenge/created/${challengedUsername}`
     )
   );

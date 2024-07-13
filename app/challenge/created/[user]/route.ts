@@ -9,7 +9,7 @@ import {kv} from "@vercel/kv"
 init(process.env.AIRSTACK_KEY || "");
 
 
-const messageInvalid = "https://i.imgur.com/cmuCZV3.png";
+const messageInvalid = "https://i.imgur.com/GOk5MhJ.png";
 const challengeBeingCreated="https://i.imgur.com/2ymHdKH.png"
 
 const _html = (img, msg1, action1, url1) => `
@@ -47,13 +47,13 @@ export async function POST(req: Request,{ params }: { params: { user: string } }
       )
     );
   }
-
+  const challengerUsername=frameMessage.requesterUserData?.username
   return new NextResponse(
     _html(
       challengeBeingCreated,
       "Check status",
       "post",
-      `${URL}/challenge/transactionStatus/${challengedUsername}-${data.untrustedData.transactionId}`,
+      `${URL}/challenge/transactionStatus/creation/${challengedUsername}-${data.untrustedData.transactionId}`,
     )
   );
 }

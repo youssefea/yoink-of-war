@@ -3,14 +3,16 @@ import { URL, DEBUGGER_HUB_URL, cfaForwarderAddress, tokenAddress } from "../../
 import {account, publicClient} from "../../../config";
 import { getFrameMessage } from "frames.js";
 import { init, fetchQuery } from "@airstack/node";
-import {getFidFromHandleQuery} from "../../../api";
+import {getFidFromHandleQuery, getTotalStreamedUntilUpdatedQuery, fetchSubgraphData} from "../../../api";
 import {kv} from "@vercel/kv"
 import {cfaForwarderABI} from "../abi";
+import { formatEther } from "viem";
 
 init(process.env.AIRSTACK_KEY || "");
 
 
-const messageInvalid = "https://i.imgur.com/cmuCZV3.png";
+const messageInvalid = "https://i.imgur.com/GOk5MhJ.png";
+const battleNotExist="https://i.imgur.com/8Htdqpq.png"
 const battleDidnotStart = "https://i.imgur.com/JN8h6Sh.png";
 
 
@@ -75,27 +77,58 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const challengerAddress=await kv.hget("usersAddresses",challengerUsername);
   const challengedAddress=await kv.hget("usersAddresses",challengedUsername);
   const gameAddress=await kv.hget("gamesAddresses",`${challengerUsername}vs${challengedUsername}`);
+  const gameTimestamp= await kv.hget("gamesTimestamps",`${challengerUsername}vs${challengedUsername}`);
+  const now=Date.now()/1000;
 
-  const challengerFlowrate = await publicClient.readContract({
-    address: cfaForwarderAddress,
-    abi: cfaForwarderABI,
-    functionName: "getFlowrate",
-    args: [tokenAddress, challengerAddress, gameAddress],
-  });
-  const challengedFlowrate = await publicClient.readContract({
-    address: cfaForwarderAddress,
-    abi: cfaForwarderABI,
-    functionName: "getFlowrate",
-    args: [tokenAddress, challengedAddress, gameAddress],
-  });
+  const challengerTotalStreamedQuery:any=await fetchSubgraphData(getTotalStreamedUntilUpdatedQuery(challengerAddress,gameAddress,gameTimestamp))
+  const challengerTotalStreamedUntilUpdatedAt=Number(challengerTotalStreamedQuery.data?.accounts?.outflows.streamedUntilUpdatedAt)
+  const challengerUpdatedAtTimestamp=Number(challengerTotalStreamedQuery.data?.accounts?.outflows.updatedAtTimestamp)
+  const challengerFlowrate=Number(challengerTotalStreamedQuery.data?.accounts?.outflows.currentFlowRate)
+  const challengerTotalStreamed=challengerTotalStreamedUntilUpdatedAt+challengerFlowrate*(now-challengerUpdatedAtTimestamp);
 
-  if (challengerFlowrate as any <= 0 || challengedFlowrate as any <= 0) {
+  const challengedTotalStreamedQuery:any=await fetchSubgraphData(getTotalStreamedUntilUpdatedQuery(challengedAddress,gameAddress,gameTimestamp));
+  const challengedTotalStreamedUntilUpdatedAt=challengedTotalStreamedQuery.data?.accounts?.outflows.streamedUntilUpdatedAt;
+  const challengedUpdatedAtTimestamp=challengedTotalStreamedQuery.data?.accounts?.outflows.updatedAtTimestamp;
+  const challengedFlowrate=challengedTotalStreamedQuery.data?.accounts?.outflows.currentFlowRate;
+  const challengedTotalStreamed=challengedTotalStreamedUntilUpdatedAt+challengedFlowrate*(now-challengedUpdatedAtTimestamp);
+  
+  const currentWinner = Number(challengerTotalStreamed) > Number(challengedTotalStreamed) ? challengerUsername : challengedUsername;
+  
+  if (frameMessage.requesterUserData?.username===challengedUsername) {
+    return new NextResponse(
+      _html(
+        `${URL}/images/onevone?user=${currentWinner}&challenger=${challengerTotalStreamed}&challenged=${challengedTotalStreamed}`,
+        "Refresh",
+        "post",
+        `${URL}`,
+      )
+    );
+  }
+
+
+
+  if (!challengerAddress || !challengedAddress || !gameAddress) {
+    return new NextResponse(
+      _html(
+        battleNotExist,
+        "Refresh",
+        "post",
+        `${URL}`,
+      )
+    );
+  }
+
+
+  const challengerFlowrateFormatted=formatEther(BigInt(challengerFlowrate));
+  const challengedFlowrateFormatted=formatEther(BigInt(challengedFlowrate));
+
+  if (Number(challengerFlowrateFormatted) as any <= 0 || Number(challengedFlowrateFormatted) as any <= 0) {
     return new NextResponse(
       _html(
         battleDidnotStart,
         "Refresh",
         "post",
-        `${URL}`,
+        `${URL}/play/check/${id}`,
       )
     );
   }

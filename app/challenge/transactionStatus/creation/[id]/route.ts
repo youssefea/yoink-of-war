@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
-import { URL, DEBUGGER_HUB_URL, gameStep } from "../../../../constants";
-import {account, publicClient} from "../../../config";
+import { URL, DEBUGGER_HUB_URL, gameStep } from "../../../../../constants";
+import {account, publicClient} from "../../../../config";
 import { getFrameMessage } from "frames.js";
 import { init, fetchQuery } from "@airstack/node";
-import {getFidFromHandleQuery} from "../../../api";
+import {getFidFromHandleQuery} from "../../../../api";
 import {kv} from "@vercel/kv"
 
 init(process.env.AIRSTACK_KEY || "");
 
 
-const messageInvalid = "https://i.imgur.com/cmuCZV3.png";
-const txNotYet="https://i.imgur.com/XnusKyn.png"
-const txFailed="https://i.imgur.com/MTYK3jn.png"
+const messageInvalid = "https://i.imgur.com/GOk5MhJ.png";
+const txNotYet="https://i.imgur.com/9PyRZIi.png"
+const txFailed="https://i.imgur.com/RyGqmD5.png"
 
 const _html = (img, msg1, action1, url1) => `
 <!DOCTYPE html>
@@ -63,7 +63,7 @@ export async function POST(req: Request,{ params }: { params: { id: string } }) 
         txNotYet,
         "Re-Check",
         "post",
-        `${URL}/challenge/transactionStatus/${id}`,
+        `${URL}/challenge/transactionStatus/creation/${id}`,
       )
     );
   }
@@ -88,7 +88,7 @@ export async function POST(req: Request,{ params }: { params: { id: string } }) 
       `${URL}/images/challengeCreated?user1=${challengerUsername}&user2=${challengedUsername}&startOrEnd=start`,
       "Share",
       "link",
-      `${URL}`,
+      `https://warpcast.com/~/compose?text=I+am+challenging+@${challengedUsername}+to+a+game+of+Yoink+of+War%3F&embeds%5B%5D=${URL}/challenge/new/${id}`,
     )
   );
 }

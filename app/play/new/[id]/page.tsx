@@ -3,8 +3,8 @@ import { URL } from '../../../../constants'
 import {kv} from '@vercel/kv'
 
 const image = "https://i.imgur.com/M6b5MFy.png";
-const buttonText1 = 'Accept'
-const buttonText2 = 'Join'
+const buttonText1 = 'Play'
+const buttonText2 = 'Game Rules'
 
 export default function Home() {
   return (
@@ -31,7 +31,7 @@ export async function generateMetadata({
   const idArray = id.split('-');
   const user1 = idArray[0];
   const user2 = idArray[1];
-  const frameImg=`${URL}/images/challengeCreated?user1=${user1}&user2=${user2}&startOrEnd=end`
+  const frameImg=`${URL}/images/challengeAccepted?user1=${user1}&user2=${user2}&startOrEnd=end`
 
   const gameAddress = await kv.hget("gamesAddresses", `${user1}vs${user2}`);
   
@@ -42,7 +42,7 @@ export async function generateMetadata({
     'fc:frame:image:aspect_ratio': '1.91:1',
     'fc:frame:button:1': buttonText1,
     'fc:frame:button:1:action': 'tx',
-    'fc:frame:button:1:target': `${URL}/challenge/accept/${gameAddress}`,
+    'fc:frame:button:1:target': `${URL}/play/check/`,
     'fc:frame:button:1:post_url': `${URL}/challenge/accepted/${user1}`,
     'fc:frame:button:2': buttonText2,
     'fc:frame:button:2:action': 'post',

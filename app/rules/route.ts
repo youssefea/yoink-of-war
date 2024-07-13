@@ -3,7 +3,7 @@ import { URL, DEBUGGER_HUB_URL } from "../../constants";
 import { getFrameMessage } from "frames.js";
 
 
-const messageInvalid = "https://i.imgur.com/cmuCZV3.png";
+const messageInvalid = "https://i.imgur.com/GOk5MhJ.png";
 const gameRules="https://i.imgur.com/S8TyY3m.png";
 
 

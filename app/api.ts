@@ -1,11 +1,11 @@
 import fetch from "node-fetch";
+import { tokenAddress } from "./../constants";
 
 const URL =
   process.env.ENVIRONMENT === "local"
     ? process.env.LOCALHOST
     : process.env.PROD_URL;
 
-const tokenAddress = process.env.SUPER_TOKEN_ADDRESS as `0x${string}`;
 
 export const followingQuery = (id) => `
 query isFollowing {
@@ -127,6 +127,18 @@ query FidFromUsername {
     }
   }
 }`;
+
+export const getTotalStreamedUntilUpdatedQuery=(sender, receiver, timestamp) => `
+query getTotalStreamedUntilUpdated {
+  accounts(where: {id: "${sender}"}) {
+    outflows(where: {updatedAtTimestamp_gt: "${timestamp}", token: "${tokenAddress}", receiver: "${receiver}"}) {
+      streamedUntilUpdatedAt
+      currentFlowRate
+      updatedAtTimestamp
+    }
+  }
+}
+  `
 
 // Function to perform the POST request and handle the response
 export async function fetchSubgraphData(myQuery) {
