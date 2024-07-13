@@ -53,6 +53,7 @@ export async function POST(req: Request,{ params }: { params: { id: string } }) 
   const data = await req.json();
   const id=params.id;
   const idArray=id.split("-");
+  console.log(idArray)
   const challengerUsername=idArray[0];
   const transactionId:any=idArray[1]
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { URL, DEBUGGER_HUB_URL, gameStep } from "./../../../../constants";
+import { URL, DEBUGGER_HUB_URL, gameStep } from "../../../../constants";
 import {account, publicClient} from "../../../config";
 import { getFrameMessage } from "frames.js";
 import { init, fetchQuery } from "@airstack/node";
@@ -32,6 +32,7 @@ const _html = (img, msg1, action1, url1) => `
 export async function POST(req: Request,{ params }: { params: { user: string } }) {
   const data = await req.json();
   const challengerUsername=params.user
+  console.log(challengerUsername)
 
   const frameMessage = await getFrameMessage(data, {
     hubHttpUrl: DEBUGGER_HUB_URL,

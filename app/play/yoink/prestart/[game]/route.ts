@@ -31,7 +31,7 @@ const _html = (img, msg1, action1, url1) => `
 
 export async function POST(req: Request, { params }: { params: { game: string } }) {
   const data = await req.json();
-  const gameAddress=params.game
+  const game=params.game
 
   const frameMessage = await getFrameMessage(data, {
     hubHttpUrl: DEBUGGER_HUB_URL,
@@ -55,7 +55,7 @@ export async function POST(req: Request, { params }: { params: { game: string } 
       confirmYoink,
       "Check status",
       "post",
-      `${URL}/play/yoink/start/${gameAddress}`,
+      `${URL}/play/yoink/start/${game}`,
     )
   );
 }

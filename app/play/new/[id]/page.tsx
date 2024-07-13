@@ -41,13 +41,13 @@ export async function generateMetadata({
     'fc:frame:image': frameImg,
     'fc:frame:image:aspect_ratio': '1.91:1',
     'fc:frame:button:1': buttonText1,
-    'fc:frame:button:1:action': 'tx',
-    'fc:frame:button:1:target': `${URL}/play/check/`,
-    'fc:frame:button:1:post_url': `${URL}/challenge/accepted/${user1}`,
+    'fc:frame:button:1:action': 'post',
+    'fc:frame:button:1:target': `${URL}/play/check/${id}`,
+    'fc:frame:button:1:post_url': `${URL}/play/check/${id}`,
     'fc:frame:button:2': buttonText2,
     'fc:frame:button:2:action': 'post',
-    'fc:frame:button:2:post_url': `${URL}/airdrop1`,
-    'fc:frame:button:2:target': `${URL}/airdrop1`,
+    'fc:frame:button:2:post_url': `${URL}/rules`,
+    'fc:frame:button:2:target': `${URL}/rules`,
 
   }
 

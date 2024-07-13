@@ -77,6 +77,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const challengerAddress=await kv.hget("usersAddresses",challengerUsername);
   const challengedAddress=await kv.hget("usersAddresses",challengedUsername);
   const gameAddress=await kv.hget("gamesAddresses",`${challengerUsername}vs${challengedUsername}`);
+  const gameIndex=await kv.hget("gamesIndexes",`${challengerUsername}vs${challengedUsername}`);
   const gameTimestamp= await kv.hget("gamesTimestamps",`${challengerUsername}vs${challengedUsername}`);
   const now=Date.now()/1000;
 
@@ -100,7 +101,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         `${URL}/images/onevone?user=${currentWinner}&challenger=${challengerTotalStreamed}&challenged=${challengedTotalStreamed}`,
         "Yoink",
         "post",
-        `${URL}/play/yoink/prestart/${gameAddress}`,
+        `${URL}/play/yoink/prestart/${gameIndex}-${gameAddress}`,
         "Refresh",
         "post",
         `${URL}`,

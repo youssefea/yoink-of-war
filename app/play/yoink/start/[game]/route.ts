@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { URL, DEBUGGER_HUB_URL, gameStep, cfaForwarderAddress, tokenAddress } from "../../../../../constants";
 import { cfaForwarderABI } from "../../../../abi";
-import {account, publicClient} from "../../../../config";
+import {account, publicClient, walletClient} from "../../../../config";
 import { getFrameMessage } from "frames.js";
 import { init, fetchQuery } from "@airstack/node";
 import {getFidFromHandleQuery} from "../../../../api";
@@ -32,7 +32,10 @@ const _html = (img, msg1, action1, url1) => `
 
 export async function POST(req: Request, { params }: { params: { game: string } }) {
   const data = await req.json();
-  const gameAddress=params.game;
+  const game=params.game
+  const gameArray=game.split("-");
+  const gameIndex=gameArray[0];
+  const gameAddress=gameArray[1];
 
   const frameMessage = await getFrameMessage(data, {
     hubHttpUrl: DEBUGGER_HUB_URL,
@@ -49,13 +52,21 @@ export async function POST(req: Request, { params }: { params: { game: string } 
     );
   }
 
-  const yoinkerAddress=await kv.hget("usersAddresses",frameMessage.);
+  const yoinkerAddress=await kv.hget("usersAddresses",frameMessage.requesterUserData?.username as any);
 
   let yoinkerFlowRate: any = await publicClient.readContract({
     address: cfaForwarderAddress,
     abi: cfaForwarderABI,
     functionName: "getFlowRate",
-    args: [tokenAddress, ],
+    args: [tokenAddress, yoinkerAddress, gameAddress ],
+  });
+
+  let startFlowRate: any = await walletClient.writeContract({
+    address: cfaForwarderAddress,
+    abi: cfaForwarderABI,
+    functionName: "setFlowrate",
+    account: account(parseInt(gameIndex)),
+    args: [tokenAddress, yoinkerAddress, gameAddress, yoinkerFlowRate, gameStep ],
   });
 
   return new NextResponse(

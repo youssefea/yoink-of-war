@@ -88,7 +88,7 @@ export async function POST(req: Request,{ params }: { params: { id: string } }) 
       `${URL}/images/challengeCreated?user1=${challengerUsername}&user2=${challengedUsername}&startOrEnd=start`,
       "Share",
       "link",
-      `https://warpcast.com/~/compose?text=I+am+challenging+@${challengedUsername}+to+a+game+of+Yoink+of+War%3F&embeds%5B%5D=${URL}/challenge/new/${id}`,
+      `https://warpcast.com/~/compose?text=I+am+challenging+@${challengedUsername}+to+a+game+of+Yoink+of+War%3F&embeds%5B%5D=${URL}/challenge/new/${challengerUsername}-${challengedUsername}`,
     )
   );
 }
