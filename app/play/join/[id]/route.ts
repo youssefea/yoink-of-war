@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { URL, DEBUGGER_HUB_URL, gameStep } from "../../../../constants";
 import { getFrameMessage } from "frames.js";
 import { encodeFunctionData } from "viem";
-import { cfaForwarderABI } from "../abi";
+import { cfaForwarderABI } from "../../../abi";
 
 const tokenAddress=process.env.SUPER_TOKEN_ADDRESS as `0x${string}`;
 const cfaForwarderAddress=process.env.CFA_FORWARDER_ADDRESS as `0x${string}`;

@@ -33,7 +33,7 @@ const _html = (img, msg1, action1, url1) => `
 </html>
 `;
 
-const _html1 = (img, msg1, action1, url1,msg2, action2,url2,post_url2) => `
+const _html1 = (img, msg1, action1, url1,msg2, action2,url2) => `
 <!DOCTYPE html>
 <head>
     <title>Frame</title>
@@ -48,7 +48,7 @@ const _html1 = (img, msg1, action1, url1,msg2, action2,url2,post_url2) => `
     <meta property="fc:frame:button:2" content="${msg2}" />
     <meta property="fc:frame:button:2:action" content="${action2}" />
     <meta property="fc:frame:button:2:target" content="${url2}" />
-    <meta property="fc:frame:button:2:post_url" content="${post_url2}" />
+    <meta property="fc:frame:button:2:post_url" content="${url2}" />
   </head>
 `;
 
@@ -94,18 +94,19 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   
   const currentWinner = Number(challengerTotalStreamed) > Number(challengedTotalStreamed) ? challengerUsername : challengedUsername;
   
-  if (frameMessage.requesterUserData?.username===challengedUsername) {
+  if (frameMessage.requesterUserData?.username===challengedUsername || frameMessage.requesterUserData?.username===challengerUsername) {
     return new NextResponse(
-      _html(
+      _html1(
         `${URL}/images/onevone?user=${currentWinner}&challenger=${challengerTotalStreamed}&challenged=${challengedTotalStreamed}`,
+        "Yoink",
+        "post",
+        `${URL}/play/yoink/prestart/${gameAddress}`,
         "Refresh",
         "post",
         `${URL}`,
       )
     );
   }
-
-
 
   if (!challengerAddress || !challengedAddress || !gameAddress) {
     return new NextResponse(
@@ -142,7 +143,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       "Start Challenge",
       "tx",
       `${URL}/play/join/${challengerAddress}-${challengedUsername}`,
-      `${URL}/challenge/created/${challengedUsername}`,
     )
   );
 }
