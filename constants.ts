@@ -8,4 +8,4 @@ export const URL = process.env.ENVIRONMENT === 'local' ?
   export const gameStep=100000000000;
 
   export const cfaForwarderAddress="0xcfA132E353cB4E398080B9700609bb008eceB125";
-  export const tokenAddress="0x9CaCD0108DED0041B7Ff6763769F2Ca68d2845Ae";
+  export const tokenAddress="0x9cacd0108ded0041b7ff6763769f2ca68d2845ae";
