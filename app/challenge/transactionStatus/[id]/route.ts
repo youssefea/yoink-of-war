@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { URL, DEBUGGER_HUB_URL, gameStep } from "./../../../../constants";
+import { URL, DEBUGGER_HUB_URL, gameStep } from "../../../../constants";
 import {account, publicClient} from "../../../config";
 import { getFrameMessage } from "frames.js";
 import { init, fetchQuery } from "@airstack/node";
@@ -10,7 +10,8 @@ init(process.env.AIRSTACK_KEY || "");
 
 
 const messageInvalid = "https://i.imgur.com/cmuCZV3.png";
-const challengeBeingCreated="https://i.imgur.com/2ymHdKH.png"
+const txNotYet="https://i.imgur.com/XnusKyn.png"
+const txFailed="https://i.imgur.com/MTYK3jn.png"
 
 const _html = (img, msg1, action1, url1) => `
 <!DOCTYPE html>
@@ -29,9 +30,12 @@ const _html = (img, msg1, action1, url1) => `
 </html>
 `;
 
-export async function POST(req: Request,{ params }: { params: { user: string } }) {
+export async function POST(req: Request,{ params }: { params: { id: string } }) {
   const data = await req.json();
-  const challengedUsername=params.user
+  const id=params.id;
+  const idArray=id.split("-");
+  const challengedUsername=idArray[0];
+  const transactionId:any=idArray[1]
 
   const frameMessage = await getFrameMessage(data, {
     hubHttpUrl: DEBUGGER_HUB_URL,
@@ -48,12 +52,43 @@ export async function POST(req: Request,{ params }: { params: { user: string } }
     );
   }
 
+  let transaction;
+  try {
+    transaction = await publicClient.getTransactionReceipt({ 
+      hash: transactionId
+    })
+  } catch (error) {
+    return new NextResponse(
+      _html(
+        txNotYet,
+        "Re-Check",
+        "post",
+        `${URL}/challenge/transactionStatus/${id}`,
+      )
+    );
+  }
+  
+  const transactionStatus = transaction.status;
+  if (transactionStatus !== "success") {
+    return new NextResponse(
+      _html(
+        txFailed,
+        "Restart",
+        "post",
+        `${URL}`,
+      )
+    );
+  }
+
+  const challengerUsername=frameMessage.requesterUserData?.username
+  const challengerAddress=transaction.from
+  await kv.hset("usersAddresses", {[`${challengerUsername}`]: challengerAddress});
   return new NextResponse(
     _html(
-      challengeBeingCreated,
-      "Check status",
-      "post",
-      `${URL}/challenge/transactionStatus/${challengedUsername}-${data.untrustedData.transactionId}`,
+      `${URL}/images/challengeCreated?user1=${challengerUsername}&user2=${challengedUsername}&startOrEnd=start`,
+      "Share",
+      "link",
+      `${URL}`,
     )
   );
 }

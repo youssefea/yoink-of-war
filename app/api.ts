@@ -93,9 +93,6 @@ query MyQuery(
   }
 }`;
 
-
-
-
 export const numberOfFollowersQuery = (profileId) => `
 query FollowerCount {
   Socials(
@@ -108,7 +105,7 @@ query FollowerCount {
 }
 `;
 
-export const getUserHandleQuery= (fid) => `
+export const getUserHandleQuery = (fid) => `
 query getUserHandle {
   Socials(
     input: {filter: {dappName: {_eq: farcaster}, userId: {_eq: "${fid}"}}, blockchain: ethereum}
@@ -128,7 +125,8 @@ query FidFromUsername {
     Social {
       userId
     }
-  }`;
+  }
+}`;
 
 // Function to perform the POST request and handle the response
 export async function fetchSubgraphData(myQuery) {
