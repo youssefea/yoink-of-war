@@ -148,7 +148,7 @@ export async function fetchSubgraphData(myQuery) {
 
   try {
     const response = await fetch(
-      "https://optimism-sepolia.subgraph.x.superfluid.dev/",
+      "https://arbitrum-one.subgraph.x.superfluid.dev/",
       {
         method: "POST",
         headers: {
