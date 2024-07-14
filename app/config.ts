@@ -1,14 +1,14 @@
 import { createWalletClient, createPublicClient, http } from 'viem'
 import { privateKeyToAccount, mnemonicToAccount } from 'viem/accounts'
-import { base, polygonMumbai, optimismSepolia } from 'viem/chains'
+import { base, polygonMumbai, optimismSepolia, arbitrum} from 'viem/chains'
 
 export const walletClient = createWalletClient({
-  chain: optimismSepolia,
+  chain: arbitrum,
   transport:  http(process.env.RPC_URL)
 })
 
 export const publicClient = createPublicClient({
-  chain: optimismSepolia,
+  chain: arbitrum,
   transport: http(process.env.RPC_URL)
 })
 

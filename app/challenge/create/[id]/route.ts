@@ -52,7 +52,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   return NextResponse.json({
     method: "eth_sendTransaction",
-    chainId: "eip155:11155420",
+    chainId: "eip155:42161",
     params: {
       abi: cfaForwarderABI,
       to: cfaForwarderAddress,

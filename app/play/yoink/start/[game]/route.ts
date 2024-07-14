@@ -11,7 +11,7 @@ init(process.env.AIRSTACK_KEY || "");
 
 
 const messageInvalid = "https://i.imgur.com/GOk5MhJ.png";
-const confirmDone="https://i.imgur.com/IV4Sb3X.png"
+const confirmDone="https://i.imgur.com/kIY3B4z.png"
 
 const _html = (img, msg1, action1, url1) => `
 <!DOCTYPE html>
@@ -105,7 +105,7 @@ export async function POST(req: Request, { params }: { params: { game: string } 
       `${URL}/play/check/${challengerUsername}-${challengedUsername}`,
       "End game?",
       "post",
-      `${URL}/play/yoink/end/${game}`,
+      `${URL}/play/end/lose`,
     )
   );
 }

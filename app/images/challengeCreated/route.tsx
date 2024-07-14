@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { ImageResponse } from "next/og";
 import { unstable_noStore as noStore } from "next/cache";
 
-const imgStart="https://i.imgur.com/F1ZtM91.png"
+const imgStart="https://i.imgur.com/ABCs2R9.png"
 const imgEnd="https://i.imgur.com/5lCt72O.png"
 
 export async function GET(req: NextRequest) {
