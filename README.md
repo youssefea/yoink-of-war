@@ -1,3 +1,1 @@
-# AlfaFrens Frames
-
-with updated lists!
+# ETH Global Brussels
